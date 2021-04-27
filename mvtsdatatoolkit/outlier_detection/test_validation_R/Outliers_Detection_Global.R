@@ -11,6 +11,6 @@ Outliers_StdDev <- function(df_list, distance_threshold = 3){
 }
 
 # Function to detect outliers using IQR method
-Outliers_IQR(df_list){
+Outliers_IQR <- function(df_list){
   return(boxplot.stats(df_list[!is.na(df_list)])$out)
 }
