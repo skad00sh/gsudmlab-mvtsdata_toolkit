@@ -22,6 +22,7 @@ class TestUniGlobOutliers(unittest.TestCase):
         res.sort()
         return res
 
+
     def test_stationarytrend(self):
         """ 
         This test ensures that if no outliers are found, empty list is the output.
@@ -31,6 +32,7 @@ class TestUniGlobOutliers(unittest.TestCase):
 
         self.assertEqual(self.sorted_output(Outliers_StdDev, df, 3), [])
         self.assertEqual(self.sorted_output(Outliers_IQR, df), [])
+
 
     def test_stationarytrend_missing_values(self):
         """ 
@@ -52,16 +54,15 @@ class TestUniGlobOutliers(unittest.TestCase):
 
     def test_lowerBound_outliers(self):
         """
-
+        This test focusses on lower bound outliers.
+        Results have been verfied using R-Script located in test_validation_R folder. 
         """
         df = pd.read_csv('data_outlierdetection/lowerBound_outliers.csv')['Sales']
         
         self.assertEqual(self.sorted_output(Outliers_StdDev, df, 3), [99, 108, 136, 237])
-        
+
         res_iqr = [5, 5, 5, 67, 68, 68, 69, 69, 69, 70, 72, 73, 74, 75, 78, 83, 84, 99, 108, 136, 237]
         self.assertEqual(self.sorted_output(Outliers_IQR, df), res_iqr)
-
-
 
 
     def test_temperature_dataset(self):
@@ -76,6 +77,28 @@ class TestUniGlobOutliers(unittest.TestCase):
         """ This result has been verfied using R-Script located in test_validation_R folder """
         res_iqr = [22.7, 22.8, 23.0, 23.4, 23.9, 24.0, 24.1, 24.3, 24.8, 25.0, 25.0, 25.2, 26.3]
         self.assertEqual(self.sorted_output(Outliers_IQR, df), res_iqr)
+        
+    
+    def test_default_dataset(self):
+        """
+        Checking outliers on the default dataset.
+        """
+        df = pd.read_csv('data_outlierdetection/datatest.csv')
+        res_std = [[], [],
+                   [1209.80, 1419.50, 1697.25], [],
+                   [], []]
+        for i, j in enumerate(df.columns.tolist()[1:]):
+            self.assertEqual(self.sorted_output(Outliers_StdDev, df[j], 3), res_std[i])
+
+        res_iqr = [[], [],
+                   [1209.80, 1419.50, 1697.25], [],
+                   [], []]
+        for i, j in enumerate(df.columns.tolist()[1:]):
+            self.assertEqual(self.sorted_output(Outliers_IQR, df[j]), res_iqr[i])
+
+        # These above two for loops can be merged into one loop. 
+
+
 
 if __name__ == '__main__':
     unittest.main()
