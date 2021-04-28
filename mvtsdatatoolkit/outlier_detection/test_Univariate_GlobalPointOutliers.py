@@ -50,6 +50,18 @@ class TestUniGlobOutliers(unittest.TestCase):
         self.assertEqual(self.sorted_output(Outliers_StdDev, df, 3), [])
         self.assertEqual(self.sorted_output(Outliers_IQR, df), [34, 36])
 
+    def test_lowerBound_outliers(self):
+        """
+
+        """
+        df = pd.read_csv('data_outlierdetection/lowerBound_outliers.csv')['Sales']
+        
+        self.assertEqual(self.sorted_output(Outliers_StdDev, df, 3), [99, 108, 136, 237])
+        
+        res_iqr = [5, 5, 5, 67, 68, 68, 69, 69, 69, 70, 72, 73, 74, 75, 78, 83, 84, 99, 108, 136, 237]
+        self.assertEqual(self.sorted_output(Outliers_IQR, df), res_iqr)
+
+
 
 
     def test_temperature_dataset(self):
