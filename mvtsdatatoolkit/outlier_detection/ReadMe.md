@@ -28,7 +28,33 @@ FAILED (failures=1)
 
 **What could be the problem?**
 
-Probably `np.percentile` in IQR method is unable to handle `nan`. (But I am still confirming)
+Probably `np.percentile` in IQR method is unable to handle `nan`. ~~(But I am still confirming)~~
+
+My final verdict is `np.percentile` can not handle `nan` values. 
+
+```
+>>> data = pd.Series([1, 2, 3])
+>>> print(np.percentile(data, 25))
+1.5
+
+>>> data = pd.Series([1, np.nan, 3])
+>>> print(np.percentile(data, 25))
+nan
+```
+
+So `Outliers_IQR` function should either remove `nan` or throw an error if it is present in the data. 
+
+```
+>>> data = pd.Series([1, np.nan, 3])
+>>> data = data[~np.isnan(data)]
+>>> print(data)
+0   1
+1   3
+dtype: int32
+
+>>> print(np.percentile(data, 25))
+ 1.5
+```
 
 Box plots clearly shows the outliers:
 
