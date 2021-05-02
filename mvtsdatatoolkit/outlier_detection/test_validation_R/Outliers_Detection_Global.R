@@ -23,3 +23,9 @@ Outliers_IQR <- function(df_list){
   return (sort(outliers))
   #return(sort(boxplot.stats(df_list[!is.na(df_list)])$out))
 }
+
+# Function to detect difference with lag
+# there is not need to create following funciton in R. 
+findDerivatives_Univariate <- function(df_list, lag = 1){
+  return(diff(df_list, lag))
+}
