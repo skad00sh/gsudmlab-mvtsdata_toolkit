@@ -65,3 +65,16 @@ Box plots clearly shows the outliers:
 2. R
 
 ![R-boxplot](https://github.com/skad00sh/gsudmlab-mvtsdata_toolkit/blob/724345afb5857c28c52e25fb61f87e494403f709/mvtsdatatoolkit/outlier_detection/conflicts/R%20boxplot%20stationarytrend_with_missingVal.jpeg?raw=true)
+
+
+## test_Univariate_LocalPointOutliers.py
+
+### Output
+
+```
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.108s
+
+OK
+```
