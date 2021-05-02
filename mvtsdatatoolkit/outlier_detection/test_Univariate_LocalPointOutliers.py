@@ -6,9 +6,21 @@ import unittest
 #from pandas._libs.missing import NA
 
 # importing required functions from the method
-from Univariate_LocalPointOutliers import findDerivatives_Univariate 
+from Univariate_LocalPointOutliers import findDerivatives_Univariate, Outliers_StdDev 
 
 class TestUniGlobOutliers(unittest.TestCase):
+
+    def sorted_output(self, func, lst, diff = False):
+        """
+        This function gives sorted output.
+        Default value for `diff` is False. 
+        """
+        if diff == False:
+           res = func(lst)
+        else:
+            res = func(lst, diff)
+        res.sort()
+        return res
     
     def test_stationarytrend_diff(self):
         """
@@ -68,6 +80,47 @@ class TestUniGlobOutliers(unittest.TestCase):
             ans_lst = df_ans[['Date', df_ans.columns[i+1]]].dropna().iloc[:, 1].to_list()
             ans_lst = [round(val, accuracy) for val in ans_lst]
             self.assertAlmostEqual(check_lst, ans_lst)
+    
+    def test_default_dataset(self):
+        """
+        Checking findDerivatives_Univariate on the default dataset.
+        This test also uses rounding but it is by default set to 3 decimal values. 
+        """
+        df = pd.read_csv('data_outlierdetection/datatest.csv')
+        df_ans = pd.read_csv("data_outlierdetection/datatest_diff_ans.csv")
+
+        for i, j in enumerate(df.columns.to_list()[1:]):
+            check_lst = findDerivatives_Univariate(df[['date', j]], 1).dropna().iloc[:, 0].to_list()
+            check_lst = [round(val, 3) for val in check_lst]
+            ans_lst = df_ans[['date', df_ans.columns[i+1]]].dropna().iloc[:, 1].to_list()
+            ans_lst = [round(val, 3) for val in ans_lst]
+            self.assertAlmostEqual(check_lst, ans_lst)
+            
+    def test_stationarytrend(self):
+        """ 
+        This test ensures that if no outliers are found, empty list is the output.
+        Results have been verfied using R-Script located in test_validation_R folder.
+        """
+        df = pd.read_csv('data_outlierdetection/stationarytrend.csv')['Temp']
+
+        self.assertEqual(self.sorted_output(Outliers_StdDev, df, 3), [])
+
+    def test_stationarytrend_missing_values(self):
+        """ 
+        This test ensure that missing values handling for the outlier detetction.
+
+        Example (for Standard Deviation):
+        data = [1, 2, 3, 4, 5] -> mean = 3
+        Correct:
+            data = [1, 2, 3, , 5] -> mean = 2.75 (Total count of numbers 4)
+        Wrong:
+            data = [1, 2, 3, , 5] -> mean = 2.2 (Here blank is also being counted hence count of numbers 5)
+
+        Results have been verfied using R-Script located in test_validation_R folder.
+        """
+        df = pd.read_csv('data_outlierdetection/stationarytrend.csv')['Temp_missing_val']
+        self.assertEqual(self.sorted_output(Outliers_StdDev, df, 3), [])
+
 
 if __name__ == '__main__':
     unittest.main()
